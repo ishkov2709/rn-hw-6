@@ -12,6 +12,7 @@ import MapScreen from './src/Screens/MapScreen';
 import { Provider } from 'react-redux';
 import store from './src/store/store';
 import { PersistGate } from 'redux-persist/integration/react';
+import { Text } from 'react-native';
 
 const MainStack = createStackNavigator();
 

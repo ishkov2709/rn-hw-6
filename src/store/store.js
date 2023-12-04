@@ -9,7 +9,6 @@ import {
   REGISTER,
 } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import persistReducer from 'redux-persist/es/persistReducer';
 import { rootReducer } from './rootSlice';
 import { configureStore } from '@reduxjs/toolkit';
 

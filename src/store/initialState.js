@@ -2,6 +2,8 @@ export const initialState = {
   user: {
     username: '',
     email: '',
+    posts: [],
   },
-  posts: {},
+  isLoading: false,
+  error: null,
 };

@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import registerSchema from '../schemas/registerSchema';
 import { userDataContext } from '../context';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../config';
 
 const RegisterForm = ({ image, setImage }) => {
   const [hide, setHide] = useState(true);
@@ -19,14 +21,26 @@ const RegisterForm = ({ image, setImage }) => {
   });
   const { setUser } = useContext(userDataContext);
 
+  const registerDB = async ({ email, password }) => {
+    try {
+      console.log(email, password);
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+      console.log(res);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return (
     <Formik
       initialValues={{ login: '', email: '', password: '' }}
       validationSchema={registerSchema}
-      onSubmit={(values, { resetForm }) => {
-        setUser({ ...values, image });
-        resetForm();
-        setImage(null);
+      onSubmit={async (values, { resetForm }) => {
+        const { email, password } = values;
+        await registerDB({ email, password });
+        // setUser({ ...values, image });
+        // resetForm();
+        // setImage(null);
       }}
     >
       {({ handleChange, handleSubmit, values, errors, touched }) => (
