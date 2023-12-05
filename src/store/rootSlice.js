@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initialState } from './initialState';
-import { registerDB } from './thunk';
+import { registerDB, uploadAvatar } from './thunk';
 import {
   handleRegisterFulfilled,
   handleRegisterPending,
   handleRegisterRejected,
+  handleUploadAvatar,
 } from './operations';
 
 const rootSlice = createSlice({
@@ -15,7 +16,8 @@ const rootSlice = createSlice({
     builder
       .addCase(registerDB.pending, handleRegisterPending)
       .addCase(registerDB.fulfilled, handleRegisterFulfilled)
-      .addCase(registerDB.rejected, handleRegisterRejected);
+      .addCase(registerDB.rejected, handleRegisterRejected)
+      .addCase(uploadAvatar.fulfilled, handleUploadAvatar);
   },
 });
 

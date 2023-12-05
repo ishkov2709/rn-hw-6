@@ -11,6 +11,8 @@ import registerSchema from '../schemas/registerSchema';
 import { userDataContext } from '../context';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config';
+import { useDispatch } from 'react-redux';
+import { registerDB, uploadAvatar } from '../store/thunk';
 
 const RegisterForm = ({ image, setImage }) => {
   const [hide, setHide] = useState(true);
@@ -19,17 +21,7 @@ const RegisterForm = ({ image, setImage }) => {
     email: false,
     password: false,
   });
-  const { setUser } = useContext(userDataContext);
-
-  const registerDB = async ({ email, password }) => {
-    try {
-      console.log(email, password);
-      const res = await createUserWithEmailAndPassword(auth, email, password);
-      console.log(res);
-    } catch (error) {
-      throw error;
-    }
-  };
+  const dispatch = useDispatch();
 
   return (
     <Formik
@@ -37,10 +29,11 @@ const RegisterForm = ({ image, setImage }) => {
       validationSchema={registerSchema}
       onSubmit={async (values, { resetForm }) => {
         const { email, password } = values;
-        await registerDB({ email, password });
+        dispatch(registerDB({ email, password }));
         // setUser({ ...values, image });
         // resetForm();
         // setImage(null);
+        dispatch(uploadAvatar(image));
       }}
     >
       {({ handleChange, handleSubmit, values, errors, touched }) => (
