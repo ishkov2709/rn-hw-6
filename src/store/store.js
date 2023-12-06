@@ -15,6 +15,7 @@ import { configureStore } from '@reduxjs/toolkit';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
+  whitelist: [],
 };
 
 const presistMiddleware = getDefaultMiddleware =>

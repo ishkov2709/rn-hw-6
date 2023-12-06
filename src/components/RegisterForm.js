@@ -11,8 +11,11 @@ import registerSchema from '../schemas/registerSchema';
 import { userDataContext } from '../context';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { registerDB, uploadAvatar } from '../store/thunk';
+import { useToast } from 'react-native-toast-notifications';
+import { useEffect } from 'react';
+import { turnOffSuccess, clearError } from '../store/rootSlice';
 
 const RegisterForm = ({ image, setImage }) => {
   const [hide, setHide] = useState(true);
@@ -22,6 +25,33 @@ const RegisterForm = ({ image, setImage }) => {
     password: false,
   });
   const dispatch = useDispatch();
+  const toast = useToast();
+  const isSuccess = useSelector(state => state.isSuccess);
+  const error = useSelector(state => state.error);
+
+  useEffect(() => {
+    isSuccess &&
+      toast.show('Registration completed successfully', {
+        type: 'success',
+        placement: 'top',
+        duration: 2000,
+        offset: 30,
+        animationType: 'slide-in',
+      });
+    dispatch(turnOffSuccess());
+  }, [isSuccess]);
+
+  useEffect(() => {
+    error &&
+      toast.show('Registration is filed', {
+        type: 'danger',
+        placement: 'top',
+        duration: 2000,
+        offset: 30,
+        animationType: 'slide-in',
+      });
+    dispatch(clearError());
+  }, [error]);
 
   return (
     <Formik
@@ -29,11 +59,9 @@ const RegisterForm = ({ image, setImage }) => {
       validationSchema={registerSchema}
       onSubmit={async (values, { resetForm }) => {
         const { email, password } = values;
-        dispatch(registerDB({ email, password }));
-        // setUser({ ...values, image });
-        // resetForm();
-        // setImage(null);
-        dispatch(uploadAvatar(image));
+        dispatch(registerDB({ email, password, image }));
+        setImage('');
+        resetForm();
       }}
     >
       {({ handleChange, handleSubmit, values, errors, touched }) => (

@@ -4,12 +4,10 @@ export const handleRegisterPending = state => {
 
 export const handleRegisterFulfilled = state => {
   state.isLoading = false;
+  state.isSuccess = true;
 };
 
 export const handleRegisterRejected = (state, { payload }) => {
+  state.isLoading = false;
   state.error = payload;
-};
-
-export const handleUploadAvatar = (state, { payload }) => {
-  console.log(payload);
 };
