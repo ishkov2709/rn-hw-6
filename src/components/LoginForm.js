@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -8,7 +8,8 @@ import {
   View,
 } from 'react-native';
 import loginSchema from '../schemas/loginSchema';
-import { userDataContext } from '../context';
+import { useDispatch } from 'react-redux';
+import { loginDB } from '../store/thunk';
 
 const LoginForm = () => {
   const [hide, setHide] = useState(true);
@@ -16,15 +17,14 @@ const LoginForm = () => {
     email: false,
     password: false,
   });
-
-  const { setUser } = useContext(userDataContext);
+  const dispatch = useDispatch();
 
   return (
     <Formik
       initialValues={{ email: '', password: '' }}
       validationSchema={loginSchema}
       onSubmit={(values, { resetForm }) => {
-        setUser({ ...values });
+        dispatch(loginDB(values));
         resetForm();
       }}
     >

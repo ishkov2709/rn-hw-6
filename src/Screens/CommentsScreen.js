@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import {
   FlatList,
   Image,
@@ -7,7 +7,6 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { userDataContext } from '../context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { nanoid } from 'nanoid';
@@ -15,7 +14,6 @@ import { format } from 'date-fns';
 import { uk } from 'date-fns/locale';
 
 const CommentsScreen = ({ route: { params } }) => {
-  const { user, publications, setPublications } = useContext(userDataContext);
   const publication = publications.find(({ id }) => id === params.id);
   const [comment, setComment] = useState('');
 

@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import {
   FlatList,
   Image,
@@ -8,13 +8,10 @@ import {
   View,
 } from 'react-native';
 import HeaderButton from '../components/HeaderButton';
-import { userDataContext } from '../context';
 import Entypo from 'react-native-vector-icons/Entypo';
 import PublicItem from '../components/PublicItem';
 
 const PostsScreen = ({ navigation }) => {
-  const { user, publications } = useContext(userDataContext);
-
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => <HeaderButton />,

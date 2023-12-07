@@ -4,8 +4,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import PostsScreen from './PostsScreen';
 import ProfileScreen from './ProfileScreen';
 import CreatePostsScreen from './CreatePostsScreen';
-import { useContext } from 'react';
-import { userDataContext } from '../context';
 import { StyleSheet, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -36,8 +34,6 @@ const Profile = ({ color, size }) => {
 const Tabs = createBottomTabNavigator();
 
 const Home = () => {
-  const { isProfile, setIsProfile } = useContext(userDataContext);
-
   return (
     <Tabs.Navigator
       screenOptions={({ route }) => ({

@@ -8,8 +8,6 @@ import {
 } from 'react-native';
 import images from '../assets/images/images';
 import AddPhoto from '../components/AddPhoto';
-import { useContext } from 'react';
-import { userDataContext } from '../context';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
@@ -18,9 +16,6 @@ import { useEffect } from 'react';
 import HeaderButton from '../components/HeaderButton';
 
 const ProfileScreen = ({ navigation }) => {
-  const { user, setUser, publications } = useContext(userDataContext);
-  const { setIsProfile } = useContext(userDataContext);
-
   const setUserImage = image => {
     setUser(prevState => ({ ...prevState, image }));
   };

@@ -7,4 +7,5 @@ export const initialState = {
   isLoading: false,
   isSuccess: false,
   error: null,
+  isLoggedIn: false,
 };

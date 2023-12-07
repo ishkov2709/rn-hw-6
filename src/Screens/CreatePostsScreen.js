@@ -13,13 +13,10 @@ import { useState } from 'react';
 import AddPicture from '../components/AddPicture';
 import { Formik } from 'formik';
 import createPostsSchema from '../schemas/createPostSchema';
-import { useContext } from 'react';
-import { userDataContext } from '../context';
 import { nanoid } from 'nanoid';
 import * as Location from 'expo-location';
 
 const CreatePostsScreen = ({ navigation }) => {
-  const { setPublications } = useContext(userDataContext);
   const [image, setImage] = useState(null);
   const [location, setLocation] = useState(null);
 

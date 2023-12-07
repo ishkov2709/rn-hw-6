@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -8,14 +8,12 @@ import {
   View,
 } from 'react-native';
 import registerSchema from '../schemas/registerSchema';
-import { userDataContext } from '../context';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../config';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerDB, uploadAvatar } from '../store/thunk';
+import { registerDB } from '../store/thunk';
 import { useToast } from 'react-native-toast-notifications';
 import { useEffect } from 'react';
 import { turnOffSuccess, clearError } from '../store/rootSlice';
+import { useNavigation } from '@react-navigation/native';
 
 const RegisterForm = ({ image, setImage }) => {
   const [hide, setHide] = useState(true);
@@ -28,9 +26,11 @@ const RegisterForm = ({ image, setImage }) => {
   const toast = useToast();
   const isSuccess = useSelector(state => state.isSuccess);
   const error = useSelector(state => state.error);
+  const navigation = useNavigation();
 
   useEffect(() => {
     isSuccess &&
+      navigation.getState().routes[0].name === 'Register' &&
       toast.show('Registration completed successfully', {
         type: 'success',
         placement: 'top',
@@ -39,10 +39,11 @@ const RegisterForm = ({ image, setImage }) => {
         animationType: 'slide-in',
       });
     dispatch(turnOffSuccess());
-  }, [isSuccess]);
+  }, [isSuccess, navigation]);
 
   useEffect(() => {
     error &&
+      navigation.getState().routes[0].name === 'Register' &&
       toast.show('Registration is filed', {
         type: 'danger',
         placement: 'top',
@@ -51,17 +52,18 @@ const RegisterForm = ({ image, setImage }) => {
         animationType: 'slide-in',
       });
     dispatch(clearError());
-  }, [error]);
+  }, [error, navigation]);
 
   return (
     <Formik
       initialValues={{ login: '', email: '', password: '' }}
       validationSchema={registerSchema}
       onSubmit={async (values, { resetForm }) => {
-        const { email, password } = values;
-        dispatch(registerDB({ email, password, image }));
+        const { login, email, password } = values;
+        dispatch(registerDB({ login, email, password, image }));
         setImage('');
         resetForm();
+        navigation.navigate('Login');
       }}
     >
       {({ handleChange, handleSubmit, values, errors, touched }) => (
