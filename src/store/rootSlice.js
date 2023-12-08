@@ -20,6 +20,9 @@ const rootSlice = createSlice({
     clearError: state => {
       state.error = null;
     },
+    logout: state => {
+      state.user = { username: null, email: null };
+    },
   },
   extraReducers: builder => {
     builder
@@ -32,6 +35,6 @@ const rootSlice = createSlice({
   },
 });
 
-export const { turnOffSuccess, clearError } = rootSlice.actions;
+export const { turnOffSuccess, clearError, logout } = rootSlice.actions;
 
 export const rootReducer = rootSlice.reducer;

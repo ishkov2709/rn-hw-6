@@ -10,8 +10,12 @@ import {
 import HeaderButton from '../components/HeaderButton';
 import Entypo from 'react-native-vector-icons/Entypo';
 import PublicItem from '../components/PublicItem';
+import { useSelector } from 'react-redux';
 
 const PostsScreen = ({ navigation }) => {
+  const user = useSelector(state => state.user);
+  const posts = useSelector(state => state.posts);
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => <HeaderButton />,
@@ -22,18 +26,18 @@ const PostsScreen = ({ navigation }) => {
     <View style={styles.mainWrapper}>
       {user && (
         <View style={styles.userContentBox}>
-          {user?.image ? (
+          {/* {user?.image ? (
             <Image source={{ uri: user.image }} style={styles.image} />
           ) : (
             <Entypo name="user" size={60} />
-          )}
+          )} */}
           <View>
             <Text style={styles.userLogin}>{user.login}</Text>
             <Text style={styles.userEmail}>{user.email}</Text>
           </View>
         </View>
       )}
-      {publications.length > 0 && (
+      {posts.length > 0 && (
         <SafeAreaView style={styles.postList}>
           <FlatList
             data={publications}

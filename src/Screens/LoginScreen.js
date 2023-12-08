@@ -9,8 +9,18 @@ import {
 } from 'react-native';
 import images from '../assets/images/images';
 import LoginForm from '../components/LoginForm';
+import { useContext, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { LoggedContext } from '../context';
 
 const LoginScreen = ({ navigation }) => {
+  const user = useSelector(state => state.user);
+  const { setIsLoggedIn } = useContext(LoggedContext);
+
+  useEffect(() => {
+    if (user) setIsLoggedIn(Boolean(user));
+  }, [user, setIsLoggedIn]);
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View>

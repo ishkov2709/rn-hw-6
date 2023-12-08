@@ -19,6 +19,7 @@ export const handleLoginPending = state => {
 export const handleLoginFulfilled = (state, { payload }) => {
   state.user = { ...payload };
   state.isLoading = false;
+  state.isLoggedIn = true;
 };
 
 export const handleLoginRejected = (state, { payload }) => {

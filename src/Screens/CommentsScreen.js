@@ -12,8 +12,10 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { nanoid } from 'nanoid';
 import { format } from 'date-fns';
 import { uk } from 'date-fns/locale';
+import { useSelector } from 'react-redux';
 
 const CommentsScreen = ({ route: { params } }) => {
+  const user = useSelector(state => state.user);
   const publication = publications.find(({ id }) => id === params.id);
   const [comment, setComment] = useState('');
 
@@ -37,48 +39,49 @@ const CommentsScreen = ({ route: { params } }) => {
     }
   };
 
-  return (
-    <View style={styles.mainWrapper}>
-      <Image source={{ uri: publication.image }} style={styles.image} />
-      {publication.comments.length > 0 && (
-        <FlatList
-          data={publication.comments}
-          renderItem={({ item }) => (
-            <View style={styles.commentBox}>
-              {item.owner.image ? (
-                <Image
-                  source={{ uri: item.owner.image }}
-                  style={styles.photoOwner}
-                />
-              ) : (
-                <Text style={styles.photoOwner}>
-                  <FontAwesome name="user-circle" size={28} />
-                </Text>
-              )}
+  if (user)
+    return (
+      <View style={styles.mainWrapper}>
+        <Image source={{ uri: publication.image }} style={styles.image} />
+        {publication.comments.length > 0 && (
+          <FlatList
+            data={publication.comments}
+            renderItem={({ item }) => (
+              <View style={styles.commentBox}>
+                {item.owner.image ? (
+                  <Image
+                    source={{ uri: item.owner.image }}
+                    style={styles.photoOwner}
+                  />
+                ) : (
+                  <Text style={styles.photoOwner}>
+                    <FontAwesome name="user-circle" size={28} />
+                  </Text>
+                )}
 
-              <View style={styles.commentDateWrapper}>
-                <Text style={styles.commentText}>{item.comment}</Text>
-                <Text style={styles.commentDate}>{item.date}</Text>
+                <View style={styles.commentDateWrapper}>
+                  <Text style={styles.commentText}>{item.comment}</Text>
+                  <Text style={styles.commentDate}>{item.date}</Text>
+                </View>
               </View>
-            </View>
-          )}
-          keyExtractor={item => item.id}
-        />
-      )}
+            )}
+            keyExtractor={item => item.id}
+          />
+        )}
 
-      <View style={styles.inputField}>
-        <TextInput
-          style={styles.inputText}
-          placeholder="Коментувати..."
-          value={comment}
-          onChangeText={setComment}
-        />
-        <Text style={styles.addCommentBtn} onPress={handleSendComment}>
-          <Ionicons name="arrow-up" size={20} color="#ffffff" />
-        </Text>
+        <View style={styles.inputField}>
+          <TextInput
+            style={styles.inputText}
+            placeholder="Коментувати..."
+            value={comment}
+            onChangeText={setComment}
+          />
+          <Text style={styles.addCommentBtn} onPress={handleSendComment}>
+            <Ionicons name="arrow-up" size={20} color="#ffffff" />
+          </Text>
+        </View>
       </View>
-    </View>
-  );
+    );
 };
 
 const styles = StyleSheet.create({

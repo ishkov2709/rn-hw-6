@@ -14,19 +14,22 @@ import { FlatList } from 'react-native-gesture-handler';
 import PublicItem from '../components/PublicItem';
 import { useEffect } from 'react';
 import HeaderButton from '../components/HeaderButton';
+import { useSelector } from 'react-redux';
 
 const ProfileScreen = ({ navigation }) => {
+  const user = useSelector(state => state.user);
+  const posts = useSelector(state => state.posts);
   const setUserImage = image => {
     setUser(prevState => ({ ...prevState, image }));
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      setIsProfile(true);
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     setIsProfile(true);
 
-      return () => setIsProfile(false);
-    })
-  );
+  //     return () => setIsProfile(false);
+  //   })
+  // );
 
   useEffect(() => {
     if (!user) navigation.navigate('Login');
@@ -39,7 +42,7 @@ const ProfileScreen = ({ navigation }) => {
         resizeMode="cover"
         style={styles.background}
       >
-        <View style={publications.length > 0 ? styles.fullBox : styles.box}>
+        <View style={posts.length > 0 ? styles.fullBox : styles.box}>
           <AddPhoto image={user?.image} setImage={setUserImage} />
 
           <TouchableOpacity style={styles.logoutBtn}>
@@ -49,7 +52,7 @@ const ProfileScreen = ({ navigation }) => {
           <Text style={styles.titie}>{user?.login}</Text>
 
           <FlatList
-            data={publications}
+            data={posts}
             renderItem={({ item }) => (
               <PublicItem item={item} navigation={navigation} />
             )}

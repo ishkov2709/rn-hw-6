@@ -81,15 +81,13 @@ const Home = () => {
         component={PostsScreen}
         options={{ title: 'Публікації', headerTitleAlign: 'center' }}
       />
-      {isProfile && (
-        <Tabs.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-      )}
+      <Tabs.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
       <Tabs.Screen
         name="Add"
         component={CreatePostsScreen}
@@ -98,15 +96,6 @@ const Home = () => {
           headerTitleAlign: 'center',
         }}
       />
-      {!isProfile && (
-        <Tabs.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-      )}
     </Tabs.Navigator>
   );
 };

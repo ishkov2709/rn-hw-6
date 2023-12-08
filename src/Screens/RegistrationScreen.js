@@ -10,10 +10,18 @@ import {
 import images from '../assets/images/images';
 import RegisterForm from '../components/RegisterForm';
 import AddPhoto from '../components/AddPhoto';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { LoggedContext } from '../context';
 
 const RegistrationScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
+  const user = useSelector(state => state.user);
+  const { setIsLoggedIn } = useContext(LoggedContext);
+
+  useEffect(() => {
+    if (user) setIsLoggedIn(Boolean(user));
+  }, [user, setIsLoggedIn]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

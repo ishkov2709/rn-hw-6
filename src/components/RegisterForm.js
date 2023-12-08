@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -52,6 +52,7 @@ const RegisterForm = ({ image, setImage }) => {
         animationType: 'slide-in',
       });
     dispatch(clearError());
+    navigation.navigate('Login');
   }, [error, navigation]);
 
   return (
@@ -63,7 +64,6 @@ const RegisterForm = ({ image, setImage }) => {
         dispatch(registerDB({ login, email, password, image }));
         setImage('');
         resetForm();
-        navigation.navigate('Login');
       }}
     >
       {({ handleChange, handleSubmit, values, errors, touched }) => (
