@@ -1,10 +1,17 @@
 import { StyleSheet, Text } from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import { useDispatch } from 'react-redux';
+import { logout } from '../store/rootSlice';
+import { useContext } from 'react';
+import { LoggedContext } from '../context';
 
 const HeaderButton = () => {
+  const dispatch = useDispatch();
+  const { setIsLoggedIn } = useContext(LoggedContext);
+
   const handleLogout = () => {
-    setUser(null);
-    setPublications([]);
+    dispatch(logout());
+    setIsLoggedIn(false);
   };
 
   return (

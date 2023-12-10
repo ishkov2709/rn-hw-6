@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  FlatList,
   Image,
-  SafeAreaView,
+  RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -10,11 +10,15 @@ import {
 import HeaderButton from '../components/HeaderButton';
 import Entypo from 'react-native-vector-icons/Entypo';
 import PublicItem from '../components/PublicItem';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { getPublications } from '../store/thunk';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const PostsScreen = ({ navigation }) => {
   const user = useSelector(state => state.user);
-  const posts = useSelector(state => state.posts);
+  const publics = useSelector(state => state.publics);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     navigation.setOptions({
@@ -22,33 +26,42 @@ const PostsScreen = ({ navigation }) => {
     });
   }, [navigation]);
 
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    dispatch(getPublications());
+    setTimeout(() => setIsRefreshing(false), 2000);
+  };
+
   return (
-    <View style={styles.mainWrapper}>
-      {user && (
-        <View style={styles.userContentBox}>
-          {/* {user?.image ? (
-            <Image source={{ uri: user.image }} style={styles.image} />
-          ) : (
-            <Entypo name="user" size={60} />
-          )} */}
-          <View>
-            <Text style={styles.userLogin}>{user.login}</Text>
-            <Text style={styles.userEmail}>{user.email}</Text>
-          </View>
-        </View>
-      )}
-      {posts.length > 0 && (
-        <SafeAreaView style={styles.postList}>
-          <FlatList
-            data={publications}
-            renderItem={({ item }) => (
-              <PublicItem item={item} navigation={navigation} />
+    <ScrollView
+      contentContainerStyle={{ minHeight: '100%' }}
+      refreshControl={
+        <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
+      }
+    >
+      <View style={styles.mainWrapper}>
+        {user && (
+          <View style={styles.userContentBox}>
+            {user.imageURL ? (
+              <Image source={{ uri: user.imageURL }} style={styles.image} />
+            ) : (
+              <Entypo name="user" size={60} />
             )}
-            keyExtractor={item => item.id}
-          />
-        </SafeAreaView>
-      )}
-    </View>
+            <View>
+              <Text style={styles.userLogin}>{user.displayName}</Text>
+              <Text style={styles.userEmail}>{user.email}</Text>
+            </View>
+          </View>
+        )}
+        {publics.length > 0 && (
+          <View>
+            {publics.map(item => (
+              <PublicItem key={item.id} item={item} navigation={navigation} />
+            ))}
+          </View>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 
@@ -78,9 +91,6 @@ const styles = StyleSheet.create({
   userEmail: {
     fontSize: 11,
     color: '#212121CC',
-  },
-  postList: {
-    marginBottom: 32,
   },
 });
 

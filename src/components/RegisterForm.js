@@ -39,12 +39,12 @@ const RegisterForm = ({ image, setImage }) => {
         animationType: 'slide-in',
       });
     dispatch(turnOffSuccess());
+    navigation.navigate('Login');
   }, [isSuccess, navigation]);
 
   useEffect(() => {
     error &&
-      navigation.getState().routes[0].name === 'Register' &&
-      toast.show('Registration is filed', {
+      toast.show(error, {
         type: 'danger',
         placement: 'top',
         duration: 2000,
@@ -52,7 +52,6 @@ const RegisterForm = ({ image, setImage }) => {
         animationType: 'slide-in',
       });
     dispatch(clearError());
-    navigation.navigate('Login');
   }, [error, navigation]);
 
   return (

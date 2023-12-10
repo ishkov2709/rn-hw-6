@@ -6,6 +6,9 @@ import ProfileScreen from './ProfileScreen';
 import CreatePostsScreen from './CreatePostsScreen';
 import { StyleSheet, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { getPublications } from '../store/thunk';
 
 const Posts = ({ color, size }) => {
   return (
@@ -34,6 +37,12 @@ const Profile = ({ color, size }) => {
 const Tabs = createBottomTabNavigator();
 
 const Home = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getPublications());
+  }, [dispatch]);
+
   return (
     <Tabs.Navigator
       screenOptions={({ route }) => ({

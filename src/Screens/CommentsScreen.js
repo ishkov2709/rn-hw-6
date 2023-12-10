@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import {
-  FlatList,
   Image,
+  RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -12,42 +13,60 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { nanoid } from 'nanoid';
 import { format } from 'date-fns';
 import { uk } from 'date-fns/locale';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { addComment, getPublications } from '../store/thunk';
 
 const CommentsScreen = ({ route: { params } }) => {
-  const user = useSelector(state => state.user);
-  const publication = publications.find(({ id }) => id === params.id);
   const [comment, setComment] = useState('');
+  const dispatch = useDispatch();
+  const user = useSelector(state => state.user);
+  const publics = useSelector(state => state.publics);
+  const currentPub = publics.find(el => el.id === params.id);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleSendComment = () => {
     if (comment.trim()) {
-      const commentsPub = [
-        ...publication.comments,
-        {
-          comment,
-          id: nanoid(),
-          owner: { name: user.name, email: user.email, image: user.image },
-          date: format(new Date(), 'dd MMMM, yyyy | HH:mm', { locale: uk }),
+      const newComment = {
+        comment,
+        id: nanoid(),
+        owner: {
+          name: user.displayName,
+          email: user.email,
+          image: user.imageURL,
         },
-      ];
-      const newPublications = [
-        ...publications.filter(({ id }) => id !== params.id),
-        { ...publication, comments: commentsPub },
-      ];
-      setPublications(newPublications);
+        date: format(new Date(), 'dd MMMM, yyyy | HH:mm', { locale: uk }),
+      };
+      dispatch(addComment({ ...currentPub, newComment }));
       setComment('');
     }
   };
 
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    dispatch(getPublications());
+    setTimeout(() => setIsRefreshing(false), 2000);
+  };
+
   if (user)
     return (
-      <View style={styles.mainWrapper}>
-        <Image source={{ uri: publication.image }} style={styles.image} />
-        {publication.comments.length > 0 && (
-          <FlatList
-            data={publication.comments}
-            renderItem={({ item }) => (
-              <View style={styles.commentBox}>
+      <ScrollView
+        contentContainerStyle={{ minHeight: '100%' }}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
+        }
+      >
+        <View style={styles.mainWrapper}>
+          <Image source={{ uri: currentPub.imageURL }} style={styles.image} />
+          {currentPub.comments.length > 0 &&
+            currentPub.comments.map(item => (
+              <View
+                style={
+                  item.owner.email !== user.email
+                    ? styles.commentBox
+                    : styles.commentBoxReverse
+                }
+                key={item.id}
+              >
                 {item.owner.image ? (
                   <Image
                     source={{ uri: item.owner.image }}
@@ -59,28 +78,32 @@ const CommentsScreen = ({ route: { params } }) => {
                   </Text>
                 )}
 
-                <View style={styles.commentDateWrapper}>
+                <View
+                  style={
+                    item.owner.email === user.email
+                      ? styles.commentDateWrapper
+                      : styles.commentDateWrapperReverse
+                  }
+                >
                   <Text style={styles.commentText}>{item.comment}</Text>
                   <Text style={styles.commentDate}>{item.date}</Text>
                 </View>
               </View>
-            )}
-            keyExtractor={item => item.id}
-          />
-        )}
+            ))}
 
-        <View style={styles.inputField}>
-          <TextInput
-            style={styles.inputText}
-            placeholder="Коментувати..."
-            value={comment}
-            onChangeText={setComment}
-          />
-          <Text style={styles.addCommentBtn} onPress={handleSendComment}>
-            <Ionicons name="arrow-up" size={20} color="#ffffff" />
-          </Text>
+          <View style={styles.inputField}>
+            <TextInput
+              style={styles.inputText}
+              placeholder="Коментувати..."
+              value={comment}
+              onChangeText={setComment}
+            />
+            <Text style={styles.addCommentBtn} onPress={handleSendComment}>
+              <Ionicons name="arrow-up" size={20} color="#ffffff" />
+            </Text>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     );
 };
 
@@ -128,6 +151,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 7,
   },
   commentBox: {
+    flexDirection: 'row',
+    gap: 16,
+    marginBottom: 24,
+  },
+  commentBoxReverse: {
     flexDirection: 'row-reverse',
     gap: 16,
     marginBottom: 24,
@@ -142,6 +170,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#00000008',
     padding: 16,
     borderTopLeftRadius: 6,
+    borderBottomRightRadius: 6,
+    borderBottomLeftRadius: 6,
+  },
+  commentDateWrapperReverse: {
+    width: '88%',
+    backgroundColor: '#00000008',
+    padding: 16,
+    borderTopRightRadius: 6,
     borderBottomRightRadius: 6,
     borderBottomLeftRadius: 6,
   },

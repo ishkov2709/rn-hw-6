@@ -1,13 +1,36 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initialState } from './initialState';
-import { loginDB, registerDB } from './thunk';
 import {
+  addComment,
+  deletePhoto,
+  getPublications,
+  loginDB,
+  registerDB,
+  setPublication,
+  uploadPhoto,
+} from './thunk';
+import {
+  handleAddCommentsFulfilled,
+  handleAddCommentsPending,
+  handleAddCommentsRejected,
+  handleDeletePhotoFulfilled,
+  handleDeletePhotoPending,
+  handleDeletePhotoRejected,
+  handleGetPublicationsFulfilled,
+  handleGetPublicationsPending,
+  handleGetPublicationsRejected,
   handleLoginFulfilled,
   handleLoginPending,
   handleLoginRejected,
   handleRegisterFulfilled,
   handleRegisterPending,
   handleRegisterRejected,
+  handleSetPublicationsFulfilled,
+  handleSetPublicationsPending,
+  handleSetPublicationsRejected,
+  handleUploadPhotoFulfilled,
+  handleUploadPhotoPending,
+  handleUploadPhotoRejected,
 } from './operations';
 
 const rootSlice = createSlice({
@@ -21,7 +44,11 @@ const rootSlice = createSlice({
       state.error = null;
     },
     logout: state => {
-      state.user = { username: null, email: null };
+      state.user = null;
+      state.publics = [];
+      state.isLoading = false;
+      state.isSuccess = false;
+      state.error = null;
     },
   },
   extraReducers: builder => {
@@ -31,7 +58,22 @@ const rootSlice = createSlice({
       .addCase(registerDB.rejected, handleRegisterRejected)
       .addCase(loginDB.pending, handleLoginPending)
       .addCase(loginDB.fulfilled, handleLoginFulfilled)
-      .addCase(loginDB.rejected, handleLoginRejected);
+      .addCase(loginDB.rejected, handleLoginRejected)
+      .addCase(deletePhoto.pending, handleDeletePhotoPending)
+      .addCase(deletePhoto.fulfilled, handleDeletePhotoFulfilled)
+      .addCase(deletePhoto.rejected, handleDeletePhotoRejected)
+      .addCase(uploadPhoto.pending, handleUploadPhotoPending)
+      .addCase(uploadPhoto.fulfilled, handleUploadPhotoFulfilled)
+      .addCase(uploadPhoto.rejected, handleUploadPhotoRejected)
+      .addCase(setPublication.pending, handleSetPublicationsPending)
+      .addCase(setPublication.fulfilled, handleSetPublicationsFulfilled)
+      .addCase(setPublication.rejected, handleSetPublicationsRejected)
+      .addCase(getPublications.pending, handleGetPublicationsPending)
+      .addCase(getPublications.fulfilled, handleGetPublicationsFulfilled)
+      .addCase(getPublications.rejected, handleGetPublicationsRejected)
+      .addCase(addComment.pending, handleAddCommentsPending)
+      .addCase(addComment.fulfilled, handleAddCommentsFulfilled)
+      .addCase(addComment.rejected, handleAddCommentsRejected);
   },
 });
 

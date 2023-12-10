@@ -8,61 +8,76 @@ import {
 } from 'react-native';
 import images from '../assets/images/images';
 import AddPhoto from '../components/AddPhoto';
-import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
-import { FlatList } from 'react-native-gesture-handler';
+import {
+  FlatList,
+  RefreshControl,
+  ScrollView,
+} from 'react-native-gesture-handler';
 import PublicItem from '../components/PublicItem';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import HeaderButton from '../components/HeaderButton';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { deletePhoto, getPublications, uploadPhoto } from '../store/thunk';
 
 const ProfileScreen = ({ navigation }) => {
   const user = useSelector(state => state.user);
-  const posts = useSelector(state => state.posts);
+  const publics = useSelector(state => state.publics);
+  const dispatch = useDispatch();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   const setUserImage = image => {
-    setUser(prevState => ({ ...prevState, image }));
+    if (!image) return dispatch(deletePhoto());
+    if (image) return dispatch(uploadPhoto(image));
   };
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     setIsProfile(true);
-
-  //     return () => setIsProfile(false);
-  //   })
-  // );
 
   useEffect(() => {
     if (!user) navigation.navigate('Login');
   }, [user]);
 
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    dispatch(getPublications());
+    setTimeout(() => setIsRefreshing(false), 2000);
+  };
+
   return (
-    <View>
-      <ImageBackground
-        source={images.background}
-        resizeMode="cover"
-        style={styles.background}
-      >
-        <View style={posts.length > 0 ? styles.fullBox : styles.box}>
-          <AddPhoto image={user?.image} setImage={setUserImage} />
+    <ScrollView
+      contentContainerStyle={{ minHeight: '100%' }}
+      refreshControl={
+        <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
+      }
+    >
+      <View>
+        <ImageBackground
+          source={images.background}
+          resizeMode="cover"
+          style={styles.background}
+        >
+          <View style={publics?.length > 0 ? styles.fullBox : styles.box}>
+            <AddPhoto image={user?.imageURL} setImage={setUserImage} />
 
-          <TouchableOpacity style={styles.logoutBtn}>
-            <HeaderButton />
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.logoutBtn}>
+              <HeaderButton />
+            </TouchableOpacity>
 
-          <Text style={styles.titie}>{user?.login}</Text>
+            <Text style={styles.titie}>{user?.displayName}</Text>
 
-          <FlatList
-            data={posts}
-            renderItem={({ item }) => (
-              <PublicItem item={item} navigation={navigation} />
-            )}
-            keyExtractor={item => item.id}
-          />
-        </View>
+            {publics.length > 0 &&
+              publics
+                .filter(item => item.owner.email === user.email)
+                .map(item => (
+                  <PublicItem
+                    key={item.id}
+                    item={item}
+                    navigation={navigation}
+                  />
+                ))}
+          </View>
 
-        <StatusBar theme="auto" />
-      </ImageBackground>
-    </View>
+          <StatusBar theme="auto" />
+        </ImageBackground>
+      </View>
+    </ScrollView>
   );
 };
 

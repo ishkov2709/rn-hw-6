@@ -13,12 +13,15 @@ import { useState } from 'react';
 import AddPicture from '../components/AddPicture';
 import { Formik } from 'formik';
 import createPostsSchema from '../schemas/createPostSchema';
-import { nanoid } from 'nanoid';
 import * as Location from 'expo-location';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPublication } from '../store/thunk';
 
 const CreatePostsScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [location, setLocation] = useState(null);
+  const user = useSelector(state => state.user);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
@@ -50,16 +53,20 @@ const CreatePostsScreen = ({ navigation }) => {
       initialValues={{ name: '', place: '' }}
       validationSchema={createPostsSchema}
       onSubmit={(values, { resetForm }) => {
-        setPublications(prevState => [
-          ...prevState,
-          {
-            ...values,
+        dispatch(
+          setPublication({
+            data: {
+              ...values,
+              comments: [],
+              location,
+              owner: {
+                name: user.displayName,
+                email: user.email,
+              },
+            },
             image,
-            id: nanoid(),
-            comments: [],
-            location,
-          },
-        ]);
+          })
+        );
         resetForm();
         setImage(null);
         navigation.navigate('Posts');

@@ -13,23 +13,23 @@ const PublicItem = ({ item, navigation }) => {
 
   return (
     <View style={styles.postItem}>
-      <Image source={{ uri: item.image }} style={styles.postImg} />
+      <Image source={{ uri: item.imageURL }} style={styles.postImg} />
       <Text style={styles.postName}>{item.name}</Text>
       <View style={styles.commentPlaceBox}>
         <TouchableOpacity
           style={styles.postComments}
           onPress={() => {
             navigation.navigate('Comments', {
-              id: item.id,
+              ...item,
             });
           }}
         >
           <FontAwesome
-            name={item.comments.length > 0 ? 'comment' : 'comment-o'}
+            name={item.comments?.length > 0 ? 'comment' : 'comment-o'}
             size={24}
-            color={item.comments.length > 0 ? '#FF6C00' : '#BDBDBD'}
+            color={item.comments?.length > 0 ? '#FF6C00' : '#BDBDBD'}
           />
-          <Text style={styles.commentCount}>{item.comments.length}</Text>
+          <Text style={styles.commentCount}>{item.comments?.length}</Text>
         </TouchableOpacity>
         <View style={styles.postPlace}>
           <Text onPress={navigateToMap(item.location)}>

@@ -1,9 +1,6 @@
 export const initialState = {
-  user: {
-    username: '',
-    email: '',
-  },
-  posts: [],
+  user: null,
+  publics: [],
   isLoading: false,
   isSuccess: false,
   error: null,
