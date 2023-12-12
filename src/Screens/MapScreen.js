@@ -1,8 +1,11 @@
-import { useRoute } from '@react-navigation/native';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const MapScreen = () => {
+  const navigation = useNavigation();
+
   const {
     params: { location },
   } = useRoute();
@@ -27,6 +30,10 @@ const MapScreen = () => {
           description="Hello"
         />
       </MapView>
+
+      <Text style={styles.backBtn} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={32} color="#000" />
+      </Text>
     </View>
   );
 };
@@ -37,6 +44,11 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+  },
+  backBtn: {
+    position: 'absolute',
+    top: 16,
+    left: 16,
   },
 });
 

@@ -26,9 +26,6 @@
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
-    },
-    "plugins": [
-      "react-native-vision-camera"
-    ]
+    }
   }
 }

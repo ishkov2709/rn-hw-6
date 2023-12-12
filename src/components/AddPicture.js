@@ -10,31 +10,41 @@ import { useEffect, useState } from 'react';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 
-const AddPicture = ({ image, setImage }) => {
-  const [hasPermission, setHasPermission] = useState(null);
+const AddPicture = ({
+  image,
+  setImage,
+  hasPermission,
+  setHasPermission,
+  isCameraReady,
+  setCameraReady,
+}) => {
   const [cameraRef, setCameraRef] = useState(null);
-  const [isCameraReady, setCameraReady] = useState(false);
 
   const removeImg = async () => {
     setImage('');
   };
 
   useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      await MediaLibrary.requestPermissionsAsync();
+    if (isCameraReady)
+      (async () => {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        await MediaLibrary.requestPermissionsAsync();
 
-      setHasPermission(status === 'granted');
-      setCameraReady(true);
-    })();
-  }, []);
+        setHasPermission(status === 'granted');
+      })();
+  }, [isCameraReady]);
 
   return (
     <View>
       <View style={styles.mainPhotoWrapper}>
         {hasPermission === null && (
           <View style={styles.imageWrapper}>
-            <Text style={styles.btnCamera}>
+            <Text
+              style={styles.btnCamera}
+              onPress={() => {
+                setCameraReady(true);
+              }}
+            >
               <AntDesign
                 name="camera"
                 size={24}
@@ -49,7 +59,10 @@ const AddPicture = ({ image, setImage }) => {
           <View style={styles.imageWrapper}>
             <View style={styles.errorWrapper}>
               <View style={styles.btnCamera}>
-                <View style={styles.halfCross} />
+                <View
+                  style={styles.halfCross}
+                  onPress={() => setCameraReady(true)}
+                />
                 <AntDesign
                   name="camera"
                   size={24}

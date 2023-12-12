@@ -20,6 +20,8 @@ import { setPublication } from '../store/thunk';
 const CreatePostsScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [location, setLocation] = useState(null);
+  const [hasPermission, setHasPermission] = useState(null);
+  const [isCameraReady, setCameraReady] = useState(false);
   const user = useSelector(state => state.user);
   const dispatch = useDispatch();
 
@@ -41,7 +43,15 @@ const CreatePostsScreen = ({ navigation }) => {
 
   useEffect(() => {
     navigation.setOptions({
-      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+      headerLeft: () => (
+        <BackButton
+          onPress={() => {
+            navigation.goBack();
+            setHasPermission(null);
+            setCameraReady(false);
+          }}
+        />
+      ),
       tabBarStyle: {
         display: 'none',
       },
@@ -81,7 +91,14 @@ const CreatePostsScreen = ({ navigation }) => {
         touched,
       }) => (
         <View style={styles.mainWrapper}>
-          <AddPicture image={image} setImage={setImage} />
+          <AddPicture
+            image={image}
+            setImage={setImage}
+            hasPermission={hasPermission}
+            setHasPermission={setHasPermission}
+            isCameraReady={isCameraReady}
+            setCameraReady={setCameraReady}
+          />
           <KeyboardAvoidingView behavior={'padding'} style={styles.keyboard}>
             <TextInput
               placeholder="Назва..."
