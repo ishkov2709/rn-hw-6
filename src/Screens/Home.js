@@ -7,8 +7,9 @@ import CreatePostsScreen from './CreatePostsScreen';
 import { StyleSheet, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getPublications } from '../store/thunk';
+import { CameraContext } from '../context';
 
 const Posts = ({ color, size }) => {
   return (
@@ -37,6 +38,7 @@ const Profile = ({ color, size }) => {
 const Tabs = createBottomTabNavigator();
 
 const Home = () => {
+  const [hasPermission, setHasPermission] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -44,68 +46,75 @@ const Home = () => {
   }, [dispatch]);
 
   return (
-    <Tabs.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color }) => {
-          if (route.name === 'Posts') {
-            return (
-              <Posts
-                color={color}
-                size={focused ? 13 : 24}
-                focused={focused || false}
-              />
-            );
-          }
-          if (route.name === 'Add') {
-            return (
-              <Add
-                color={color}
-                size={focused ? 13 : 24}
-                focused={focused || false}
-              />
-            );
-          }
-          if (route.name === 'Profile') {
-            return (
-              <Profile
-                color={color}
-                size={focused ? 13 : 24}
-                focused={focused || false}
-              />
-            );
-          }
-        },
-        tabBarActiveTintColor: '#ffffff',
-        tabBarInactiveTintColor: '#212121CC',
-        tabBarActiveBackgroundColor: '#FF6C00',
-        tabBarInactiveBackgroundColor: '#ffffff',
-        tabBarItemStyle: styles.btnBottom,
-        tabBarStyle: styles.tabBar,
-        tabBarShowLabel: false,
-      })}
-      initialRouteName="Posts"
+    <CameraContext.Provider
+      value={{
+        hasPermission,
+        setHasPermission,
+      }}
     >
-      <Tabs.Screen
-        name="Posts"
-        component={PostsScreen}
-        options={{ title: 'Публікації', headerTitleAlign: 'center' }}
-      />
-      <Tabs.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Tabs.Screen
-        name="Add"
-        component={CreatePostsScreen}
-        options={{
-          title: 'Створити публікацію',
-          headerTitleAlign: 'center',
-        }}
-      />
-    </Tabs.Navigator>
+      <Tabs.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color }) => {
+            if (route.name === 'Posts') {
+              return (
+                <Posts
+                  color={color}
+                  size={focused ? 13 : 24}
+                  focused={focused || false}
+                />
+              );
+            }
+            if (route.name === 'Add') {
+              return (
+                <Add
+                  color={color}
+                  size={focused ? 13 : 24}
+                  focused={focused || false}
+                />
+              );
+            }
+            if (route.name === 'Profile') {
+              return (
+                <Profile
+                  color={color}
+                  size={focused ? 13 : 24}
+                  focused={focused || false}
+                />
+              );
+            }
+          },
+          tabBarActiveTintColor: '#ffffff',
+          tabBarInactiveTintColor: '#212121CC',
+          tabBarActiveBackgroundColor: '#FF6C00',
+          tabBarInactiveBackgroundColor: '#ffffff',
+          tabBarItemStyle: styles.btnBottom,
+          tabBarStyle: styles.tabBar,
+          tabBarShowLabel: false,
+        })}
+        initialRouteName="Posts"
+      >
+        <Tabs.Screen
+          name="Posts"
+          component={PostsScreen}
+          options={{ title: 'Публікації', headerTitleAlign: 'center' }}
+        />
+        <Tabs.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Tabs.Screen
+          name="Add"
+          component={CreatePostsScreen}
+          options={{
+            title: 'Створити публікацію',
+            headerTitleAlign: 'center',
+          }}
+        />
+      </Tabs.Navigator>
+    </CameraContext.Provider>
   );
 };
 

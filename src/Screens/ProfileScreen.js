@@ -14,25 +14,34 @@ import {
   ScrollView,
 } from 'react-native-gesture-handler';
 import PublicItem from '../components/PublicItem';
-import { useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import HeaderButton from '../components/HeaderButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { deletePhoto, getPublications, uploadPhoto } from '../store/thunk';
+import { CameraContext } from '../context';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ProfileScreen = ({ navigation }) => {
   const user = useSelector(state => state.user);
   const publics = useSelector(state => state.publics);
   const dispatch = useDispatch();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const { setHasPermission } = useContext(CameraContext);
+
+  useFocusEffect(
+    useCallback(() => {
+      setHasPermission(null);
+    }, [])
+  );
+
+  useEffect(() => {
+    if (!user) navigation.navigate('Login');
+  }, [user]);
 
   const setUserImage = image => {
     if (!image) return dispatch(deletePhoto());
     if (image) return dispatch(uploadPhoto(image));
   };
-
-  useEffect(() => {
-    if (!user) navigation.navigate('Login');
-  }, [user]);
 
   const handleRefresh = () => {
     setIsRefreshing(true);

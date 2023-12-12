@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import {
   Image,
   RefreshControl,
@@ -12,13 +12,21 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import PublicItem from '../components/PublicItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPublications } from '../store/thunk';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
+import { CameraContext } from '../context';
 
 const PostsScreen = ({ navigation }) => {
   const user = useSelector(state => state.user);
   const publics = useSelector(state => state.publics);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const dispatch = useDispatch();
+  const { setHasPermission } = useContext(CameraContext);
+
+  useFocusEffect(
+    useCallback(() => {
+      setHasPermission(null);
+    }, [])
+  );
 
   useEffect(() => {
     navigation.setOptions({

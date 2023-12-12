@@ -6,45 +6,34 @@ import {
   View,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
+import { CameraContext } from '../context';
 
-const AddPicture = ({
-  image,
-  setImage,
-  hasPermission,
-  setHasPermission,
-  isCameraReady,
-  setCameraReady,
-}) => {
+const AddPicture = ({ image, setImage }) => {
   const [cameraRef, setCameraRef] = useState(null);
+  const { hasPermission, setHasPermission } = useContext(CameraContext);
 
   const removeImg = async () => {
     setImage('');
   };
 
   useEffect(() => {
-    if (isCameraReady)
-      (async () => {
-        const { status } = await Camera.requestCameraPermissionsAsync();
-        await MediaLibrary.requestPermissionsAsync();
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync();
 
-        setHasPermission(status === 'granted');
-      })();
-  }, [isCameraReady]);
+      setHasPermission(status === 'granted');
+    })();
+  });
 
   return (
     <View>
       <View style={styles.mainPhotoWrapper}>
         {hasPermission === null && (
           <View style={styles.imageWrapper}>
-            <Text
-              style={styles.btnCamera}
-              onPress={() => {
-                setCameraReady(true);
-              }}
-            >
+            <Text style={styles.btnCamera}>
               <AntDesign
                 name="camera"
                 size={24}
@@ -59,10 +48,7 @@ const AddPicture = ({
           <View style={styles.imageWrapper}>
             <View style={styles.errorWrapper}>
               <View style={styles.btnCamera}>
-                <View
-                  style={styles.halfCross}
-                  onPress={() => setCameraReady(true)}
-                />
+                <View style={styles.halfCross} />
                 <AntDesign
                   name="camera"
                   size={24}
@@ -76,7 +62,7 @@ const AddPicture = ({
           </View>
         )}
 
-        {hasPermission && !image && isCameraReady && (
+        {hasPermission && !image && (
           <Camera
             ratio="1:1"
             style={styles.cameraWrapper}
